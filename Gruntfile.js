@@ -257,7 +257,7 @@ module.exports = function (grunt) {
                 command: function (origen, destino) { return `cp -r stores/${origen} stores/${destino} && cd stores/${destino}/ && theme new --password=${process.env.newpass} --store=${process.env.newstore} --name="${destino}"` },
             },
             createFolder: {
-                command: folderName => `cd stores && mkdir ${folderName}`,
+                command: folderName => `mkdir -p stores/${folderName}`,
             },
             shopify_theme_lint: {
                 command: shop => [`echo Checking ${shop} theme files`,
@@ -307,7 +307,7 @@ module.exports = function (grunt) {
                 }
             },
             createDevelopBranch: {
-                command: 'git branch develop',
+                command: ['git add .','git commit -a -m "creating branch develop"','git branch develop'].join(' && '),
             },
             syncFirstTime: {
                 command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '), //
