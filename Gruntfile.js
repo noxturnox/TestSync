@@ -407,6 +407,7 @@ module.exports = function (grunt) {
     })
     grunt.registerTask('createYAMLFile', function () {
         var result
+        var shopsArray = grunt.file.readYAML('config.yml')
         for (const shopName in shopsArray) {
             if(shopName=='common-files') {
                 global.stores.push(shopName);
