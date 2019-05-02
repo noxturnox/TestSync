@@ -307,7 +307,7 @@ module.exports = function (grunt) {
                 }
             },
             createDevelopBranch: {
-                command: ['git add .','git commit -a -m "creating branch develop"','git branch develop'].join(' && '),
+                command: 'git branch develop',
             },
             syncFirstTime: {
                 command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '), //
@@ -585,6 +585,8 @@ module.exports = function (grunt) {
             .run('shell:createDevelopBranch')
             .run(arrayTasksBranchMaster)
             .run('shell:branchMastercleanFirstTime')
+            .run(arrayTasksFolder)
+            .run('createYAMLFileOnEachShop')
             .run(arrayTasksBranchDevelop)
             .run('shell:branchDevelopcleanFirstTime')
     })
