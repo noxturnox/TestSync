@@ -218,7 +218,7 @@ module.exports = function (grunt) {
             createShopifyBranch: {
                 command: ['git add .','git commit --allow-empty -a -m "temporal"',
                 `git checkout ${process.env.TRAVIS_BRANCH} >/dev/null`,
-                'git checkout -b shopify >/dev/null 2>&1'].join(' && '),
+                'git checkout -b shopify >/dev/null 2>&1','grunt createYAMLFile'].join(' && '),
                 options: {
                     stdout: false,
                 }
@@ -403,6 +403,41 @@ module.exports = function (grunt) {
             }
             grunt.log.ok();  
             grunt.log.writeln('-----------------------------------------------------')
+        }
+    })
+    grunt.registerTask('createYAMLFile', function () {
+        var result
+        for (const shopName in shopsArray) {
+            if(shopName=='common-files') {
+                global.stores.push(shopName);
+                continue;
+            }
+            result = ''
+            for (const entorno in shopsArray[shopName]) {
+                if (
+                    grunt.file.exists(
+                        'stores/' + shopName + '/config.yml'
+                    )
+                ) {
+                    result += grunt.file.read(
+                        'stores/' + shopName + '/config.yml'
+                    )
+                } else {
+                    result = ''
+                }
+                    grunt.file.write(
+                        'stores/' + shopName + '/config.yml',
+                        result +
+                        '\n' +
+                        entorno +
+                        ':\n  password: ' +
+                        shopsArray[shopName][entorno].password +
+                        '\n  theme_id: ' +
+                        shopsArray[shopName][entorno].theme_id +
+                        '\n  store: ' +
+                        shopsArray[shopName][entorno].store
+                    )
+            }
         }
     })
     grunt.loadNpmTasks('grunt-json-format');
