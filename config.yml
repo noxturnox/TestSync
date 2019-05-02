@@ -1,8 +1,3 @@
-common-files:
-    massiveshops, littleshops:
-        ['templates/404.liquid','templates/blog.liquid']
-    littleshops:
-        ['templates/article.liquid']
 massiveshops:
     develop:
         password: '$massiveshops_pass'
