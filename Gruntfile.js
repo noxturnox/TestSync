@@ -309,6 +309,10 @@ module.exports = function (grunt) {
             syncFirstTime: {
                 command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '), //
             },
+            cleanFirstTime: {
+                command: ['rm stores/**/config.yml','git add .','git commit -a -m "cleaningFirstTime"'
+                ,'git tag v0.1.0','git checkout -b develop','git tag pre-v0.1.0','git push origin master develop : --tags'].join(' && '),
+            },
         }
     })
 
@@ -553,9 +557,10 @@ module.exports = function (grunt) {
     grunt.registerTask('FirstTimeSync',function(){
         var tempVarYML = grunt.file.readYAML('config.yml');
         var arrayTasks = [];
+        var arrayTasksFolder = [];
         for (const shopName in tempVarYML) {
+            arrayTasksFolder.push('shell:createFolder:'+shopName)
             if(shopName=='common-files') {
-                global.stores.push(shopName);
                 continue;
             }
             for (const envName in tempVarYML[shopName]){
@@ -563,7 +568,9 @@ module.exports = function (grunt) {
                 arrayTasks.push('shell:syncFirstTime:'+shopName+':'+envName);
             }
         }
-        grunt.task.run('createYAMLFileOnEachShop')
-        .run(arrayTasks); //
+        grunt.task.run(arrayTasksFolder)
+        .run('createYAMLFileOnEachShop')
+        .run(arrayTasks)
+        .run('shell:cleanFirstTime'); //
     })
 }
