@@ -17,6 +17,6 @@ script:
     - |
       if [[ ($TRAVIS_BRANCH == 'develop' || $TRAVIS_BRANCH == 'master') && ("$files" != '') ]]; then
         unbuffer grunt;
-      else
+      elif [[ "$files" != '' ]]
         unbuffer grunt dev;
       fi

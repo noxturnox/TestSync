@@ -405,41 +405,6 @@ module.exports = function (grunt) {
             grunt.log.writeln('-----------------------------------------------------')
         }
     })
-    grunt.registerTask('createYAMLFile', function () {
-        var result
-        for (const shopName in shopsArray) {
-            if(shopName=='common-files') {
-                global.stores.push(shopName);
-                continue;
-            }
-            result = ''
-            for (const entorno in shopsArray[shopName]) {
-                if (
-                    grunt.file.exists(
-                        'stores/' + shopName + '/config.yml'
-                    )
-                ) {
-                    result += grunt.file.read(
-                        'stores/' + shopName + '/config.yml'
-                    )
-                } else {
-                    result = ''
-                }
-                    grunt.file.write(
-                        'stores/' + shopName + '/config.yml',
-                        result +
-                        '\n' +
-                        entorno +
-                        ':\n  password: ' +
-                        shopsArray[shopName][entorno].password +
-                        '\n  theme_id: ' +
-                        shopsArray[shopName][entorno].theme_id +
-                        '\n  store: ' +
-                        shopsArray[shopName][entorno].store
-                    )
-            }
-        }
-    })
     grunt.loadNpmTasks('grunt-json-format');
     grunt.loadNpmTasks('grunt-shell')
     grunt.loadNpmTasks('grunt-prompt');
@@ -620,8 +585,6 @@ module.exports = function (grunt) {
             .run('shell:createDevelopBranch')
             .run(arrayTasksBranchMaster)
             .run('shell:branchMastercleanFirstTime')
-            .run(arrayTasksFolder)
-            .run('createYAMLFileOnEachShop')
             .run(arrayTasksBranchDevelop)
             .run('shell:branchDevelopcleanFirstTime')
     })

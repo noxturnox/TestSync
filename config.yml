@@ -1,3 +1,4 @@
+common-files:
 massiveshops:
     develop:
         password: '$massiveshops_pass'
