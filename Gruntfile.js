@@ -218,7 +218,7 @@ module.exports = function (grunt) {
             createShopifyBranch: {
                 command: ['git add .','git commit --allow-empty -a -m "temporal"',
                 `git checkout ${process.env.TRAVIS_BRANCH} >/dev/null`,
-                'git checkout -b shopify >/dev/null 2>&1','grunt createYAMLFile'].join(' && '),
+                'git checkout -b shopify >/dev/null 2>&1'].join(' && '),
                 options: {
                     stdout: false,
                 }
@@ -280,7 +280,7 @@ module.exports = function (grunt) {
                 },
             },
             pushTag: {
-                command: tag => `git push origin ${tag}`, //"https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}"
+                command: tag => `git push "https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`,
             },
             cleaning: {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
