@@ -3,7 +3,7 @@ node_js:
     - lts/*
 install:
     - npm ci
-if: tag IS blank OR commit_message !~ /no-deploy/
+if: tag IS blank
 addons:
   apt:
     packages:
