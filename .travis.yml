@@ -10,7 +10,6 @@ addons:
       - expect-dev
 before_script:
     - npm install python
-    - echo commit_message
     - npm install grunt-cli -g
     - curl -s https://shopify.github.io/themekit/scripts/install.py | sudo python
 script:
