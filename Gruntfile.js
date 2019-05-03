@@ -280,7 +280,7 @@ module.exports = function (grunt) {
                 },
             },
             pushTag: {
-                command: tag => `git push "https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`,
+                command: tag => `git push origin ${tag}`, //"https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}"
             },
             cleaning: {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
