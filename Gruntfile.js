@@ -585,6 +585,7 @@ module.exports = function (grunt) {
             .run('shell:createDevelopBranch')
             .run(arrayTasksBranchMaster)
             .run('shell:branchMastercleanFirstTime')
+            .run(arrayTasksFolder)
             .run(arrayTasksBranchDevelop)
             .run('shell:branchDevelopcleanFirstTime')
     })
