@@ -313,7 +313,7 @@ module.exports = function (grunt) {
                 command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '), //
             },
             branchMastercleanFirstTime: {
-                command: ['rm stores/**/config.yml','git add .','git commit -a -m "First Commit Branch"'
+                command: ['git add .','git commit -a -m "First Commit Branch"'
                 ,'git tag v0.1.0','git checkout develop'].join(' && '),
             },
             branchDevelopcleanFirstTime: {
