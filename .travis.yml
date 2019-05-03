@@ -3,9 +3,7 @@ node_js:
     - lts/*
 install:
     - npm ci
-if: |
-    tag IS blank OR \
-    commit_message !~ /(no-deploy|wip)/
+if: tag IS blank OR commit_message !~ /no-deploy/
 addons:
   apt:
     packages:
@@ -19,6 +17,6 @@ script:
     - |
       if [[ ($TRAVIS_BRANCH == 'develop' || $TRAVIS_BRANCH == 'master') && ("$files" != '') ]]; then
         unbuffer grunt;
-      elif [[ "$files" != '' ]]
+      elif [[ "$files" != '' ]]; then
         unbuffer grunt dev;
       fi
