@@ -318,7 +318,7 @@ module.exports = function (grunt) {
             },
             branchDevelopcleanFirstTime: {
                 command: ['rm stores/**/config.yml','git add .','git commit -a -m "no-deploy"'
-                ,'git tag pre-v0.1.0','git push origin master develop : --tags'].join(' && '),
+                ,'git tag pre-v0.1.0','git push origin master develop : --tags','git tag -d pre-v0.1.0','git tag -d v0.1.0'].join(' && '),
             },
         }
     })
