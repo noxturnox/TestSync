@@ -393,6 +393,7 @@ module.exports = function (grunt) {
     })
 
     grunt.registerTask('default', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy','shell:cleaning','pushNewTag']) 
+    grunt.registerTask('dev2', ['getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme']) 
     grunt.registerTask('dev', ['js-lint','csslint'])
     //,'cpCommonFilesToRespectiveStores'  ,'theme_lint'
     grunt.registerTask('checkstatus',function(){
