@@ -23,6 +23,7 @@
     "grunt-contrib-nodeunit": "2.0.0",
     "grunt-contrib-uglify": "4.0.1",
     "grunt-json-format": "2.0.1",
+    "grunt-move": "^1.0.1",
     "grunt-prompt": "1.3.3",
     "grunt-shell": "3.0.1",
     "grunt-stylelint": "0.10.1",

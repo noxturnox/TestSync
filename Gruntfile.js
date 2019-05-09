@@ -7,6 +7,7 @@ module.exports = function (grunt) {
     global.arrayTasksDeploy = [];
     global.changed_theme_files = [];
     global.branchRelease = '';
+    global.moveFiles = [];
     function devReleaseLog(error, stdout, stderr, callback){
         global.branchRelease = stdout;
         callback();
@@ -87,11 +88,24 @@ module.exports = function (grunt) {
             callback();
         }
     }
+    function downloadNewTheme(results){
+        grunt.task.run('shell:createFolder:'+results['shop.name'])
+        grunt.file.write('stores/'+results['shop.name']+'/config.yml','develop:\n    password: '+results['theme.pass'] +
+        '\n    theme_id: '+results['theme.dev'] +'\n    store: ' + results['store.url'] + '\nmaster:\n    password: '+results['theme.pass'] +
+        '\n    theme_id: '+results['theme.dev'] +'\n    store: ' + results['store.url'] + '\n')
+        var env = grunt.file.read('.env')
+        grunt.file.write('.env',env+results['shop.name']+'_pass='+results['theme.pass']+'\n'+results['shop.name']+'_dev='+results['theme.dev']+'\n'+
+        results['shop.name']+'_master='+results['theme.master']+'\n'+results['shop.name']+'_store_url='+results['store.url'])
+        grunt.log.write('Downloading Theme: '['yellow'].bold)
+        grunt.task.run('shell:downloadingTheme:'+results['shop.name']+':develop').then(()=>{grunt.log.ok()})
+        .run('shell:deleteYMLFiles')
+        return true
+    }
     function createNewYML(results) {
         var yaml = grunt.file.read('config.yml')
         grunt.file.write('config.yml', yaml + results['shop.name'] + ':\n    develop:\n        password: \'$' + results['shop.name'] + '_pass' +
-            '\'\n        theme_id: \'$' + results['shop.name'] + '_dev' + '\'\n        store: \'$' + results['shop.name'] + '_store_URL' + '\'\n    master:\n        password: \'$' + results['shop.name'] + '_pass' +
-            '\'\n        theme_id: \'$' + results['shop.name'] + '_master' + '\'\n        store: \'$' + results['shop.name'] + '_store_URL' + '\'\n')
+            '\'\n        theme_id: \'$' + results['shop.name'] + '_dev' + '\'\n        store: \'$' + results['shop.name'] + '_store_url' + '\'\n    master:\n        password: \'$' + results['shop.name'] + '_pass' +
+            '\'\n        theme_id: \'$' + results['shop.name'] + '_master' + '\'\n        store: \'$' + results['shop.name'] + '_store_url' + '\'\n')
         return true
     }
     function createFolder(results) {
@@ -148,9 +162,46 @@ module.exports = function (grunt) {
                                 return answers['theme.todo'] == 'yes'
                             }
                         },
+                        {
+                            config: 'allready.question',
+                            type: 'list',
+                            message: 'Do you have the theme on Shopify and environment variables on Travis ready?',
+                            choices: [{value: 'yes', name: 'Yes'}, { value: 'no', name: 'No' }],
+
+                            when: function(answers) {
+                                return answers['theme.todo'] == 'no'
+                            }
+                        },
+                        {
+                            config: 'theme.pass',
+                            type: '<input type>',
+                            message: 'API Password for the store:',
+                            default: '',
+                        },
+                        {
+                            config: 'theme.dev',
+                            type: '<input type>',
+                            message: 'Development Theme ID:',
+                            default: '',
+                        },
+                        {
+                            config: 'theme.master',
+                            type: '<input type>',
+                            message: 'Master Theme ID:',
+                            default: '',
+                        },
+                        {
+                            config: 'store.url',
+                            type: '<input type>',
+                            message: 'Store URL, for ex. htts://massiveshops-dev.myshopify.com :',
+                            default: '',
+                        },
                     ],
                     then: function (results, done) {
                         createNewYML(results)
+                        if (results['allready.question'] == 'yes'){
+                            downloadNewTheme(results)
+                        }
                         if (results['theme.todo'] == 'yes'){
                             copyTheme(results)
                         }
@@ -280,11 +331,20 @@ module.exports = function (grunt) {
                 },
             },
             pushTag: {
-                command: tag => `git push "https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`,
+                command: tag => `git push "https://tuguugit:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`, //
             },
             cleaning: {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
             `rm stores/**/config.yml arrayTasksDeployFile`, `git branch -D temporal`, `git branch -D shopify`].join(' && ')
+            },
+            removeFoldersFromAssets: {
+                command: store => [
+                `rm -r stores/${store}/assets/img`,
+                `rm -r stores/${store}/assets/css_scss`,
+                `rm -r stores/${store}/assets/js`,
+                `rm -r stores/${store}/assets/liquid`,
+                `rm -r stores/${store}/assets/font`,
+                ].join(' && '),
             },
             jslint: {
                 command: './node_modules/.bin/eslint "stores/**/**.js"',
@@ -309,8 +369,14 @@ module.exports = function (grunt) {
             createDevelopBranch: {
                 command: 'git branch develop',
             },
+            deleteYMLFiles: {
+                command: 'rm stores/**/config.yml',
+                options: {
+                    stdout: false,
+                },
+            },
             syncFirstTime: {
-                command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '), //
+                command: (shopName,env)=>[`cd stores/${shopName}`,`theme download --env=${env}`].join(' && '),
             },
             branchMastercleanFirstTime: {
                 command: ['git add .','git commit -a -m "no-deploy"'
@@ -324,13 +390,122 @@ module.exports = function (grunt) {
     })
 
     grunt.registerTask('default', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy','shell:cleaning','pushNewTag']) 
-    grunt.registerTask('dev', ['getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','shell:cleaning','shell:cleanLocal'])
+    grunt.registerTask('dev3', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy']) 
+    grunt.registerTask('dev2', ['getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme']) 
+    grunt.registerTask('dev', ['js-lint','csslint'])
     //,'cpCommonFilesToRespectiveStores'  ,'theme_lint'
     grunt.registerTask('checkstatus',function(){
         if(process.env.TRAVIS==undefined || process.env.TRAVIS=='false'){
             grunt.log.writeln('THIS COMMAND MUST BE ONLY USED IN TRAVIS'['red'].bold)
             return false;
         }
+    })
+    grunt.registerTask('prueba1',function(){
+        tiendas = grunt.file.readYAML('config.yml')
+        arrayTienda = []
+        for (tienda in tiendas){
+            if(tienda=='common-files'){
+                continue;
+            }
+            arrayTienda.push('prueba:'+tienda)
+        }
+        
+        grunt.task.run(['prueba:shop1','prueba:shop2'])
+    })
+    grunt.registerTask('moveFilesToEachFolder',function(name){
+        
+        
+        
+        grunt.config('move', {
+            
+                jpg: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${name}/assets/*.{jpg,png,svg,gif}`,
+                    dest: `stores/${name}/assets/img/`
+                },
+                js: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${name}/assets/*.js`,
+                    dest: `stores/${name}/assets/js/`
+                },
+                liquid: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${name}/assets/*.liquid`,
+                    dest: `stores/${name}/assets/liquid/`
+                },
+                css_scss: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${name}/assets/*.{css,scss}`,
+                    dest: `stores/${name}/assets/css_scss/`
+                },
+                font: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${name}/assets/*.{eot,ttf,woff}`,
+                    dest: `stores/${name}/assets/font/`
+                },
+            
+        })
+        grunt.task.run('move')
+        
+    
+    })
+    grunt.registerTask('moveFilesToAssets',function(Storename){
+        
+        
+        
+        grunt.config('move', {
+            
+                jpg: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${Storename}/assets/img/*`,
+                    dest: `stores/${Storename}/assets/`
+                },
+                js: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${Storename}/assets/js/*`,
+                    dest: `stores/${Storename}/assets/`
+                },
+                liquid: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${Storename}/assets/liquid/*`,
+                    dest: `stores/${Storename}/assets/`
+                },
+                css_scss: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${Storename}/assets/css_scss/*`,
+                    dest: `stores/${Storename}/assets/`
+                },
+                font: {
+                    options: {
+                        ignoreMissing: true
+                    },
+                    src: `stores/${Storename}/assets/font/*`,
+                    dest: `stores/${Storename}/assets/`
+                },
+            
+        })
+        grunt.task.run('move')
+        grunt.task.run('shell:removeFoldersFromAssets:'+Storename)
+        
+    
     })
     grunt.registerTask('createYAMLFileOnEachShop', function () {
         var result
@@ -409,6 +584,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-shell')
     grunt.loadNpmTasks('grunt-prompt');
     grunt.loadNpmTasks("grunt-then");
+    grunt.loadNpmTasks('grunt-move');
     grunt.loadNpmTasks( 'grunt-stylelint' );
     grunt.registerTask('compareStoreTheme', function () {
         global.stores.forEach(store => {
@@ -420,16 +596,19 @@ module.exports = function (grunt) {
             })
             if(storesAsso[store].length!=0){
                 global.arrayTasksStores.push('tasksForEachStore:'+store)
+                global.moveFiles.push('moveFilesToAssets:'+store)
                 global.arrayTasksDeploy.push('arrayTasksDeployForEachStore:'+global.storesAsso[store].join(' ')+':'+store)
                 grunt.file.write('arrayTasksDeployFile',global.arrayTasksDeploy)
             }
         })
         grunt.task
-        .run("shell:addandcommit").then( ()=>{
+        .run("shell:addandcommit")
+        .then( ()=>{
             grunt.log.write('Temporal branch: '['yellow'].bold);
             grunt.log.writeln();
         })
-        .run('shell:temporalBranch:'+global.branchRelease).then( ()=>{
+        .run('shell:temporalBranch:'+global.branchRelease)
+        .run(global.moveFiles).then( ()=>{
             grunt.log.write(('  Running PRETTIER: '))
         })
         .run('shell:prettier:**').then( ()=> {
@@ -453,6 +632,7 @@ module.exports = function (grunt) {
                 grunt.log.writeln();
                 grunt.log.write('  Downloading Theme: ')
                 grunt.task
+            .run('shell:removeFoldersFromAssets:'+storeName)
             .run('shell:downloadingTheme:'+storeName+':'+tempEnvironment).then(()=>{
                 grunt.log.ok();
                 grunt.log.write('  Running PRETTIER: ')
@@ -484,12 +664,12 @@ module.exports = function (grunt) {
     })
     grunt.registerTask('js-lint',function(){
         grunt.log.writeln();
-        grunt.log.write('Running js-lint on all Stores: '['yellow'].bold);
+        grunt.log.write(('Running js-lint on all Stores: ')['yellow'].bold);
         grunt.task.run('shell:jslint');
     })
     grunt.registerTask('csslint', function(){
         grunt.log.writeln();
-        grunt.log.write('Checking css files '['yellow'].bold);
+        grunt.log.write(('Checking css files ')['yellow'].bold);
         grunt.task.run('stylelint');
     })
     grunt.registerTask('theme_lint', function () {
