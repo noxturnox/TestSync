@@ -8,12 +8,3 @@ massiveshops:
         password: '$massiveshops_pass'
         theme_id: '$massiveshops_master'
         store: '$massiveshops_store_url'
-littleshops:
-    develop:
-        password: '$littleshops_pass'
-        theme_id: '$littleshops_dev'
-        store: '$littleshops_store_url'
-    master:
-        password: '$littleshops_pass'
-        theme_id: '$littleshops_master'
-        store: '$littleshops_store_url'
