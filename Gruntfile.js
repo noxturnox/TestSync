@@ -339,11 +339,11 @@ module.exports = function (grunt) {
             },
             removeFoldersFromAssets: {
                 command: store => [
-                `rm -r stores/${store}/img`,
-                `rm -r stores/${store}/css_scss`,
-                `rm -r stores/${store}/js`,
-                `rm -r stores/${store}/liquid`,
-                `rm -r stores/${store}/font`,
+                `rm -r stores/${store}/assets/img`,
+                `rm -r stores/${store}/assets/css_scss`,
+                `rm -r stores/${store}/assets/js`,
+                `rm -r stores/${store}/assets/liquid`,
+                `rm -r stores/${store}/assets/font`,
                 ].join(' && '),
             },
             jslint: {
