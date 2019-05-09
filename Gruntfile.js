@@ -337,17 +337,13 @@ module.exports = function (grunt) {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
             `rm stores/**/config.yml arrayTasksDeployFile`, `git branch -D temporal`, `git branch -D shopify`].join(' && ')
             },
-            mvassets: {
-                command: store => [`cd stores/${store}/assets`,'mkdir {img,css_scss,js,liquid,font}','mv *.{jpg,gif,png,svg} img/','mv *.{css,scss} css_scss/','mv *.js js/',
-                'mv *.{ttf,woff,eot} font/','mv *.liquid liquid/'].join(' && '),
-            },
-            mvassetstostore: {
-                command: store => [`cd stores/${store}/assets`,
-                'mv img/* .','rm -r img',
-                'mv css_scss/* .','rm -r css_scss',
-                'mv js/* .','rm -r js',
-                'mv liquid/* .','rm -r liquid',
-                'mv font/* .','rm -r font',
+            removeFoldersFromAssets: {
+                command: store => [,
+                `rm -r stores/${store}/img`,
+                `rm -r stores/${store}/css_scss`,
+                `rm -r stores/${store}/js`,
+                `rm -r stores/${store}/liquid`,
+                `rm -r stores/${store}/font`,
                 ].join(' && '),
             },
             jslint: {
@@ -394,6 +390,7 @@ module.exports = function (grunt) {
     })
 
     grunt.registerTask('default', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy','shell:cleaning','pushNewTag']) 
+    grunt.registerTask('dev3', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy']) 
     grunt.registerTask('dev2', ['getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme']) 
     grunt.registerTask('dev', ['js-lint','csslint'])
     //,'cpCommonFilesToRespectiveStores'  ,'theme_lint'
@@ -506,6 +503,7 @@ module.exports = function (grunt) {
             
         })
         grunt.task.run('move')
+        grunt.task.run('shell:removeFoldersFromAssets:'+Storename)
         
     
     })
@@ -634,6 +632,7 @@ module.exports = function (grunt) {
                 grunt.log.writeln();
                 grunt.log.write('  Downloading Theme: ')
                 grunt.task
+            .run('shell:removeFoldersFromAssets:'+storeName)
             .run('shell:downloadingTheme:'+storeName+':'+tempEnvironment).then(()=>{
                 grunt.log.ok();
                 grunt.log.write('  Running PRETTIER: ')
