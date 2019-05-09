@@ -493,7 +493,7 @@ module.exports = function (grunt) {
                     options: {
                         ignoreMissing: true
                     },
-                    src: `stores/${Storename}/assets/css_scss/`,
+                    src: `stores/${Storename}/assets/css_scss/*`,
                     dest: `stores/${Storename}/assets/`
                 },
                 font: {
