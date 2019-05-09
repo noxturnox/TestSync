@@ -299,7 +299,7 @@ module.exports = function (grunt) {
                 }
             },
             exec_comparison: {
-                command: storeName=> `git diff --ignore-space-at-eol -b -w --diff-filter=MAC --ignore-blank-lines shopify..temporal -- stores/${storeName}/ ":!*config.yml"`,
+                command: storeName=> `git diff --name-only --ignore-space-at-eol -b -w --diff-filter=MC --ignore-blank-lines shopify..temporal -- stores/${storeName}/ ":!*config.yml"`,
                 options: {
                     stdout: false,
                     callback: exec_comparisonlog,
@@ -332,7 +332,7 @@ module.exports = function (grunt) {
                 },
             },
             pushTag: {
-                command: tag => `git push "https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`, //
+                command: tag => `git push "https://noxturnox:${process.env.GITHUBTOKEN}@${process.env.REPO}" ${tag}`,
             },
             cleaning: {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
@@ -620,9 +620,9 @@ module.exports = function (grunt) {
                 grunt.log.writeln();
                 grunt.log.write('Shopify branch: '['yellow'].bold);
                 grunt.log.writeln();
-                grunt.log.write('  Downloading Theme: ')
-                grunt.task
-                .run('removeFoldersFromAssets:'+storeName)
+                grunt.task.run('removeFoldersFromAssets:'+storeName).then(()=>{
+                    grunt.log.write('  Downloading Theme: ')
+                })
                 .run('shell:downloadingTheme:'+storeName+':'+tempEnvironment).then(()=>{
                     grunt.log.ok();
                     grunt.log.write('  Running PRETTIER: ')
