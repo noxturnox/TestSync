@@ -95,10 +95,11 @@ module.exports = function (grunt) {
         '\n    theme_id: '+results['theme.dev'] +'\n    store: ' + results['store.url'] + '\n')
         var env = grunt.file.read('.env')
         grunt.file.write('.env',env+results['shop.name']+'_pass='+results['theme.pass']+'\n'+results['shop.name']+'_dev='+results['theme.dev']+'\n'+
-        results['shop.name']+'_master='+results['theme.master']+'\n'+results['shop.name']+'_store_url='+results['store.url'])
+        results['shop.name']+'_master='+results['theme.master']+'\n'+results['shop.name']+'_store_url='+results['store.url'+'\n'])
         grunt.log.write('Downloading Theme: '['yellow'].bold)
         grunt.task.run('shell:downloadingTheme:'+results['shop.name']+':develop').then(()=>{grunt.log.ok()})
         .run('shell:deleteYMLFiles')
+        .run('moveFilesToEachFolder:'+results['shop.name'])
         return true
     }
     function createNewYML(results) {
@@ -337,15 +338,6 @@ module.exports = function (grunt) {
                 command: [`git add .`,`git commit --allow-empty -m "cleaning"`,`git checkout ${process.env.TRAVIS_BRANCH}`,
             `rm stores/**/config.yml arrayTasksDeployFile`, `git branch -D temporal`, `git branch -D shopify`].join(' && ')
             },
-            removeFoldersFromAssets: {
-                command: store => [
-                `rm -r stores/${store}/assets/img`,
-                `rm -r stores/${store}/assets/css_scss`,
-                `rm -r stores/${store}/assets/js`,
-                `rm -r stores/${store}/assets/liquid`,
-                `rm -r stores/${store}/assets/font`,
-                ].join(' && '),
-            },
             jslint: {
                 command: './node_modules/.bin/eslint "stores/**/**.js"',
                 options: {
@@ -389,9 +381,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('default', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy','shell:cleaning','pushNewTag']) 
-    grunt.registerTask('dev3', ['checkstatus','getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy']) 
-    grunt.registerTask('dev2', ['getLastReleaseFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme']) 
+    grunt.registerTask('default', ['checkstatus','getAllReleasesFromRepo','createYAMLFileOnEachShop','getLastCommitDifferences','js-lint','csslint','compareStoreTheme','deploy','shell:cleaning','pushNewTag']) 
     grunt.registerTask('dev', ['js-lint','csslint'])
     //,'cpCommonFilesToRespectiveStores'  ,'theme_lint'
     grunt.registerTask('checkstatus',function(){
@@ -400,24 +390,8 @@ module.exports = function (grunt) {
             return false;
         }
     })
-    grunt.registerTask('prueba1',function(){
-        tiendas = grunt.file.readYAML('config.yml')
-        arrayTienda = []
-        for (tienda in tiendas){
-            if(tienda=='common-files'){
-                continue;
-            }
-            arrayTienda.push('prueba:'+tienda)
-        }
-        
-        grunt.task.run(['prueba:shop1','prueba:shop2'])
-    })
     grunt.registerTask('moveFilesToEachFolder',function(name){
-        
-        
-        
         grunt.config('move', {
-            
                 jpg: {
                     options: {
                         ignoreMissing: true
@@ -450,21 +424,14 @@ module.exports = function (grunt) {
                     options: {
                         ignoreMissing: true
                     },
-                    src: `stores/${name}/assets/*.{eot,ttf,woff}`,
+                    src: `stores/${name}/assets/*.{eot,ttf,woff,woff2}`,
                     dest: `stores/${name}/assets/font/`
                 },
-            
         })
         grunt.task.run('move')
-        
-    
     })
     grunt.registerTask('moveFilesToAssets',function(Storename){
-        
-        
-        
         grunt.config('move', {
-            
                 jpg: {
                     options: {
                         ignoreMissing: true
@@ -500,12 +467,36 @@ module.exports = function (grunt) {
                     src: `stores/${Storename}/assets/font/*`,
                     dest: `stores/${Storename}/assets/`
                 },
-            
         })
         grunt.task.run('move')
-        grunt.task.run('shell:removeFoldersFromAssets:'+Storename)
-        
-    
+        grunt.task.run('removeFoldersFromAssets:'+Storename)
+    })
+    grunt.registerTask('removeFoldersFromAssets', function(storename){
+        grunt.log.write('Deleting folder img: ')
+        if(grunt.file.isDir(`stores/${storename}/assets/img`)){
+            grunt.file.delete(`stores/${storename}/assets/img`)
+            grunt.log.ok()
+        }else grunt.log.error('Folder does not exist')
+        grunt.log.write('Deleting folder css_scss: ')
+        if(grunt.file.isDir(`stores/${storename}/assets/css_scss`)){
+            grunt.file.delete(`stores/${storename}/assets/css_scss`)
+            grunt.log.ok()
+        }else grunt.log.error('Folder does not exist')
+        grunt.log.write('Deleting folder font: ')
+        if(grunt.file.isDir(`stores/${storename}/assets/font`)){
+            grunt.file.delete(`stores/${storename}/assets/font`)
+            grunt.log.ok()
+        }else grunt.log.error('Folder does not exist')
+        grunt.log.write('Deleting folder js: ')
+        if(grunt.file.isDir(`stores/${storename}/assets/js`)){
+            grunt.file.delete(`stores/${storename}/assets/js`)
+            grunt.log.ok()
+        }else grunt.log.error('Folder does not exist')
+        grunt.log.write('Deleting folder liquid: ')
+        if(grunt.file.isDir(`stores/${storename}/assets/liquid`)){
+            grunt.file.delete(`stores/${storename}/assets/liquid`)
+            grunt.log.ok()
+        }else grunt.log.error('Folder does not exist')
     })
     grunt.registerTask('createYAMLFileOnEachShop', function () {
         var result
@@ -520,7 +511,6 @@ module.exports = function (grunt) {
             grunt.log.writeln();
             return false;
         }
-        
         grunt.log.writeln('Checking each shop and creating the config.yml'['yellow'].bold)
         for (const shopName in shopsArray) {
             if(shopName=='common-files') {
@@ -632,18 +622,18 @@ module.exports = function (grunt) {
                 grunt.log.writeln();
                 grunt.log.write('  Downloading Theme: ')
                 grunt.task
-            .run('shell:removeFoldersFromAssets:'+storeName)
-            .run('shell:downloadingTheme:'+storeName+':'+tempEnvironment).then(()=>{
-                grunt.log.ok();
-                grunt.log.write('  Running PRETTIER: ')
-            })
-            .run('shell:prettier:'+storeName).then(()=>{
-                grunt.log.ok();
-                grunt.log.write('  Running JSON-Format: ')
-            })
-            .run('json-format:formatter')
-            .run('shell:commitShopify')
-            .run('shell:exec_comparison:'+storeName)
+                .run('removeFoldersFromAssets:'+storeName)
+                .run('shell:downloadingTheme:'+storeName+':'+tempEnvironment).then(()=>{
+                    grunt.log.ok();
+                    grunt.log.write('  Running PRETTIER: ')
+                })
+                .run('shell:prettier:'+storeName).then(()=>{
+                    grunt.log.ok();
+                    grunt.log.write('  Running JSON-Format: ')
+                })
+                .run('json-format:formatter')
+                .run('shell:commitShopify')
+                .run('shell:exec_comparison:'+storeName)
             
     })
     grunt.registerTask('prettier',function(){
@@ -702,7 +692,7 @@ module.exports = function (grunt) {
         grunt.task.run('prompt:target')
     })
     grunt.registerTask('getLastCommitDifferences', 'shell:get_last_commit_differences')
-    grunt.registerTask('getLastReleaseFromRepo',function(){
+    grunt.registerTask('getAllReleasesFromRepo',function(){
         if(process.env.TRAVIS_BRANCH == 'master'){
             grunt.task.run('shell:getLastRelease')
         }else {

@@ -1,4 +1,4 @@
-# Repo Title
+# Shopify Theme Editor
 A Shopify oriented multi-store automated system that simplifies store's files updating process.
 
 ## Features
@@ -21,11 +21,11 @@ cd /path/to/your/directory
 ```
 Once you are there, clone the repository using Git:
 ```
-git clone https://github.com/noxturnox/travisORG
+git clone https://github.com/Tuguusl/ec-shopify-theme-editor.git
 ```
 Now you need to move inside the cloned repository:
 ```
-cd travisORG/
+cd name-repo/
 ```
 Create a new Git branch with the name of the environment where you will be working on (develop, production, other):
 ```
@@ -97,3 +97,44 @@ To upload the changes made to Shopify:
 theme deploy
 ```
 You can add ``--env=environment_name`` to each command listed above to specify which environment to use or ``-a`` if you want to do it on every environment in the config.yml file.
+
+## Grunt Tasks
+
+Each of the next tasks can be used in the terminal, to run a task use: 
+
+```
+grunt taskname
+```
+
+- moveFilesToEachFolder:shopname
+  > Moves all files from assets to their respective folders depending on their extension, replace **shopname** with the name of the shop
+
+- moveFilesToAssets:shopname
+  > Moves all files from their respective folders to assets, replace **shopname** with the name of the shop
+
+- createYAMLFileOnEachShop
+  > Create config.yml on each shop
+
+- prettier
+  > Run prettier to all stores
+
+- js-lint
+  > Run js-lint to all stores
+
+- csslint
+  > Run css-lint to all stores
+
+- json-format
+  > Run json-format to all stores
+
+- createShop
+  > Add new shop
+
+- cpCommonFilesToRespectiveStores
+  > Copy common-files to their respective stores
+
+- shell:downloadingTheme:shopname:environment
+  > Download a Theme, need the config.yml for that respective shop to exist on that shop folder (grunt createYAMLFileOnEachShop), replace **shopname** with the name of the shop and **environment** with the environment name to use, ex. **develop**
+
+- shell:deleteYMLFiles
+  > Delete the YML File for each shop
