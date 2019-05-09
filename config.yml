@@ -1,6 +1,4 @@
 common-files:
-    littleshops,massiveshops:
-        [templates/404.liquid,config/settings_data.json]
 massiveshops:
     develop:
         password: '$massiveshops_pass'
