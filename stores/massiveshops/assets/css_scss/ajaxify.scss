@@ -37,9 +37,9 @@ $gutter: 24px;
   Add your theme colors in here, or create new styles.
     - If creating new styles, you may have to restyle text, headers and links
 ==============================================================================*/
-$colorBody: {{ settings.color_body_bg }};
-$colorTextBody: {{ settings.color_body_text }};
-$colorBorder: {{ settings.color_borders }};
+$colorBody: ;
+$colorTextBody: #585858;
+$colorBorder: #ececec;
 
 /*============================================================================
   Dependency-free breakpoint mixin
@@ -47,7 +47,7 @@ $colorBorder: {{ settings.color_borders }};
 ==============================================================================*/
 $min: min-width;
 $max: max-width;
-@mixin at-query ($constraint, $viewport1, $viewport2:null) {
+@mixin at-query($constraint, $viewport1, $viewport2: null) {
   @if $constraint == $min {
     @media screen and ($min: $viewport1) {
       @content;
@@ -75,19 +75,19 @@ $max: max-width;
 }
 
 @mixin transform-origin($origin) {
-  @include prefix('transform-origin', #{$origin});
+  @include prefix("transform-origin", #{$origin});
 }
 
 @mixin transform-style($style: preserve-3d) {
-  @include prefix('transform-style', #{$style});
+  @include prefix("transform-style", #{$style});
 }
 
 @mixin perspective($perspective) {
-  @include prefix('perspective', #{$perspective});
+  @include prefix("perspective", #{$perspective});
 }
 
 @mixin backface($visibility: hidden) {
-  @include prefix('backface-visibility', #{$visibility});
+  @include prefix("backface-visibility", #{$visibility});
 }
 
 @mixin box-sizing($box-sizing: border-box) {
@@ -97,11 +97,11 @@ $max: max-width;
 }
 
 @mixin transform($transform) {
-  @include prefix('transform', #{$transform});
+  @include prefix("transform", #{$transform});
 }
 
 @mixin transition($transition: 0.1s all) {
-  @include prefix('transition', #{$transition});
+  @include prefix("transition", #{$transition});
 }
 
 @mixin clearfix() {
@@ -113,10 +113,9 @@ $max: max-width;
 }
 
 @function color-control($color) {
-  @if (lightness( $color ) > 40) {
+  @if (lightness($color) > 40) {
     @return #000;
-  }
-  @else {
+  } @else {
     @return #fff;
   }
 }
@@ -124,7 +123,7 @@ $max: max-width;
 /*============================================================================
   General Styles
 ==============================================================================*/
-@include at-query ($max, $small) {
+@include at-query($max, $small) {
   body.ajaxify-modal--visible {
     overflow: hidden;
   }
@@ -155,7 +154,6 @@ form[action^="/cart/add"] {
   @include clearfix;
 }
 
-
 /*============================================================================
   Ajaxify Cart - General
 ==============================================================================*/
@@ -164,7 +162,7 @@ form[action^="/cart/add"] {
   background-color: $colorBody;
   @include perspective(1000px);
   @include transform-style(preserve-3d);
-  @include transition(all 450ms cubic-bezier(0.57,.06,.05,.95));
+  @include transition(all 450ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
   padding-top: $gutter;
   padding-bottom: $gutter;
   overflow: hidden;
@@ -177,7 +175,7 @@ form[action^="/cart/add"] {
     margin-bottom: 0;
   }
 
-  @include at-query ($max, $medium) {
+  @include at-query($max, $medium) {
     padding-top: 15px;
     padding-bottom: 15px;
   }
@@ -211,9 +209,9 @@ form[action^="/cart/add"] {
     padding: 0;
     margin: -$gutter 0 0;
     visibility: hidden;
-    @include transform('rotateX(-92deg)');
+    @include transform("rotateX(-92deg)");
     @include backface(hidden);
-    @include transition(all 450ms cubic-bezier(0.57,.06,.05,.95));
+    @include transition(all 450ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
     max-height: 0;
   }
 }
@@ -234,7 +232,6 @@ form[action^="/cart/add"] {
     max-width: 100%;
   }
 }
-
 
 /*============================================================================
   #Quantity Selectors
@@ -268,10 +265,10 @@ form[action^="/cart/add"] {
   text-align: center;
   overflow: hidden;
   -webkit-user-select: none;
-  -moz-user-select:    none;
-  -ms-user-select:     none;
-  -o-user-select:      none;
-  user-select:         none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   @include transition(all 0.2s ease-out);
 
   &:hover {
@@ -310,7 +307,7 @@ form[action^="/cart/add"] {
   @include transition(all 0.1s ease-out);
 
   .supports-no-touch & {
-    border: 1px solid rgba(0,0,0,0);
+    border: 1px solid rgba(0, 0, 0, 0);
   }
 
   .cart-row:hover &,
@@ -345,7 +342,6 @@ form[action^="/cart/add"] {
   @extend .js--minus;
 }
 
-
 /*============================================================================
   Ajaxify Flip
 ==============================================================================*/
@@ -375,7 +371,7 @@ form[action^="/cart/add"] {
   @include transform-origin(100% 0);
 
   .is-flipped & {
-    @include transform('rotateX(92deg) translateY(-50%)');
+    @include transform("rotateX(92deg) translateY(-50%)");
   }
 }
 
@@ -389,12 +385,12 @@ form[action^="/cart/add"] {
   text-align: center;
   background-color: #464646;
   @include box-sizing();
-  @include transform('rotateX(-90deg) translateY(50%)');
+  @include transform("rotateX(-90deg) translateY(50%)");
   @include transform-origin(0 100%);
 
   .is-flipped & {
     opacity: 1;
-    @include transform('rotateX(0deg)');
+    @include transform("rotateX(0deg)");
   }
 }
 
@@ -421,14 +417,16 @@ form[action^="/cart/add"] {
   white-space: nowrap;
   z-index: 5;
   line-height: 34px;
-  @include transition(opacity 450ms cubic-bezier(0.57,.06,.05,.95));
+  @include transition(opacity 450ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
 
   .is-flipped + & {
     opacity: 1;
     visibility: visible;
     width: auto;
     padding-left: 10px;
-    @include transition(opacity 650ms cubic-bezier(0.57, 0.06, 0.05, 0.95) 750ms);
+    @include transition(
+      opacity 650ms cubic-bezier(0.57, 0.06, 0.05, 0.95) 750ms
+    );
   }
 }
 
@@ -440,7 +438,6 @@ form[action^="/cart/add"] {
 .flip-checkout {
   margin: 0;
 }
-
 
 /*============================================================================
   Ajaxify Modal
@@ -457,24 +454,26 @@ form[action^="/cart/add"] {
   visibility: hidden;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  @include transition('left 0s linear 700ms, box-shadow 600ms cubic-bezier(0.47, 0.5, 0, 0.95) 400ms, margin-top 200ms ease-in-out');
+  @include transition(
+    "left 0s linear 700ms, box-shadow 600ms cubic-bezier(0.47, 0.5, 0, 0.95) 400ms, margin-top 200ms ease-in-out"
+  );
 
   // Short screens
-  @media only screen and (max-height:645px) {
+  @media only screen and (max-height: 645px) {
     top: 70px;
   }
 
   // Medium-down screens
-  @include at-query ($max, $medium) {
+  @include at-query($max, $medium) {
     max-width: 90%;
   }
 
   // Small screens
-  @include at-query ($max, $small) {
+  @include at-query($max, $small) {
     position: fixed;
     top: 0;
     bottom: 0;
-    margin: 0!important;
+    margin: 0 !important;
     max-height: none;
     max-width: none;
   }
@@ -484,13 +483,13 @@ form[action^="/cart/add"] {
     padding-right: $gutter;
 
     // Medium-down screens
-    @include at-query ($max, $medium) {
+    @include at-query($max, $medium) {
       padding-left: 15px;
       padding-right: 15px;
     }
 
     // Small screens
-    @include at-query ($max, $small) {
+    @include at-query($max, $small) {
       padding-bottom: 60px;
       min-height: 100%;
     }
@@ -499,21 +498,22 @@ form[action^="/cart/add"] {
   &.is-visible {
     visibility: visible;
     left: 50%;
-    @include transition('left 0s linear, box-shadow 600ms cubic-bezier(0.47, 0.5, 0, 0.95) 400ms, margin-top 200ms ease-in-out');
+    @include transition(
+      "left 0s linear, box-shadow 600ms cubic-bezier(0.47, 0.5, 0, 0.95) 400ms, margin-top 200ms ease-in-out"
+    );
 
     // Large screens
-    @include at-query ($min, $large) {
-      box-shadow: 0px 10px 80px rgba(0,0,0,.25);
+    @include at-query($min, $large) {
+      box-shadow: 0px 10px 80px rgba(0, 0, 0, 0.25);
     }
 
     // Small screens
-    @include at-query ($max, $small) {
+    @include at-query($max, $small) {
       left: 0;
     }
   }
 
   .ajaxifyCart--row {
-
     & > div {
       padding-left: 20px;
 
@@ -528,14 +528,13 @@ form[action^="/cart/add"] {
   }
 
   .update-cart {
-    display: none!important;
+    display: none !important;
   }
 
   // No transform fallback
   &.no-transforms {
     border: 1px solid $colorBorder;
   }
-
 }
 
 #ajaxifyCart-overlay {
@@ -548,23 +547,21 @@ form[action^="/cart/add"] {
   z-index: 99999998;
   opacity: 0;
   cursor: pointer;
-  @include transition(all 450ms cubic-bezier(0.57,.06,.05,.95));
-  @if (lightness( $colorBody ) > 40) {
+  @include transition(all 450ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
+  @if (lightness($colorBody) > 40) {
     background-color: #d3d3d3;
-  }
-  @else {
+  } @else {
     background-color: #333333;
   }
 }
 
-@include at-query ($min, $postSmall) {
+@include at-query($min, $postSmall) {
   .is-visible ~ #ajaxifyCart-overlay {
     visibility: visible;
     @include transition(all 650ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
-    @if (lightness( $colorBody ) > 40) {
+    @if (lightness($colorBody) > 40) {
       opacity: 0.8;
-    }
-    @else {
+    } @else {
       opacity: 0.95;
     }
 
@@ -588,9 +585,8 @@ form[action^="/cart/add"] {
 // Quantity selector colors in the modal
 // TO DO
 .ajaxify-modal {
-
   // Small screen quantity appearance
-  @include at-query ($max, $medium) {
+  @include at-query($max, $medium) {
     input[type="text"] {
       border-color: $colorBorder;
     }
@@ -608,7 +604,7 @@ form[action^="/cart/add"] {
   height: 0px;
   overflow: hidden;
   border-bottom: 0px solid transparent;
-  @include perspective (1000px);
+  @include perspective(1000px);
   @include transform-style(preserve-3d);
   @include transition(all 600ms cubic-bezier(0.47, 0.5, 0, 0.95));
 
@@ -618,7 +614,7 @@ form[action^="/cart/add"] {
   }
 
   .update-cart {
-    display: none!important;
+    display: none !important;
   }
 
   .ajaxifyCart--content {
@@ -628,12 +624,12 @@ form[action^="/cart/add"] {
     padding-top: $gutter;
     padding-bottom: $gutter;
     @include transform-origin(top);
-    @include transform('rotateX(-90deg)');
+    @include transform("rotateX(-90deg)");
   }
 
   &.is-visible .ajaxifyCart--content {
     opacity: 1;
-    @include transform('rotateX(0deg)');
+    @include transform("rotateX(0deg)");
   }
 }
 
@@ -644,7 +640,7 @@ form[action^="/cart/add"] {
   opacity: 0;
   overflow: hidden;
 
-  @include at-query ($max, $medium) {
+  @include at-query($max, $medium) {
     display: none;
   }
 
@@ -665,17 +661,15 @@ form[action^="/cart/add"] {
     border-top: 6px solid $colorBody;
     margin-left: -6px;
     opacity: 0;
-    @include transform(translate(0,-12px));
+    @include transform(translate(0, -12px));
     @include transition(all 0.25s ease-in-out 0.2s);
   }
 
   .is-visible + & > span {
-    @include transform(translate(0,0));
+    @include transform(translate(0, 0));
     opacity: 1;
   }
 }
-
-
 
 /*============================================================================
   Sprites
@@ -714,33 +708,31 @@ form[action^="/cart/add"] {
   background: {
     color: transparent;
     position: center center;
-    image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkMzRUY2REVBNDY1QjExRTM4ODdCODU0OEQ4MDA1MjgwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkMzRUY2REVCNDY1QjExRTM4ODdCODU0OEQ4MDA1MjgwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QzNFRjZERTg0NjVCMTFFMzg4N0I4NTQ4RDgwMDUyODAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QzNFRjZERTk0NjVCMTFFMzg4N0I4NTQ4RDgwMDUyODAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7sdZ8fAAAAp0lEQVR42nSPQQ6CMBBFx4ZEj+DSY8BGt9SVwRP1QBDdULeygaN4BFzpn+Q3mZCW5DFk/uvQ2YUQfiIygYuUnzc4O7wW/QCxIEbmi8oNG23mgO03js0reDF4gCNry77mUpkpHvSgo7QHA7gnwW1+q8FKcbViTtbJB/Bl7Uty5BWe4MTa2aWTPJplbuDDmpYe04IzqBn4zbU8J2udHcUpI9oDmtd/AQYAX20mtnhTCxQAAAAASUVORK5CYII=)
+    image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkMzRUY2REVBNDY1QjExRTM4ODdCODU0OEQ4MDA1MjgwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkMzRUY2REVCNDY1QjExRTM4ODdCODU0OEQ4MDA1MjgwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QzNFRjZERTg0NjVCMTFFMzg4N0I4NTQ4RDgwMDUyODAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QzNFRjZERTk0NjVCMTFFMzg4N0I4NTQ4RDgwMDUyODAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7sdZ8fAAAAp0lEQVR42nSPQQ6CMBBFx4ZEj+DSY8BGt9SVwRP1QBDdULeygaN4BFzpn+Q3mZCW5DFk/uvQ2YUQfiIygYuUnzc4O7wW/QCxIEbmi8oNG23mgO03js0reDF4gCNry77mUpkpHvSgo7QHA7gnwW1+q8FKcbViTtbJB/Bl7Uty5BWe4MTa2aWTPJplbuDDmpYe04IzqBn4zbU8J2udHcUpI9oDmtd/AQYAX20mtnhTCxQAAAAASUVORK5CYII=);
   }
   z-index: 999999999;
   @include backface(hidden);
-  @include transition(all 450ms cubic-bezier(0.57,.06,.05,.95));
+  @include transition(all 450ms cubic-bezier(0.57, 0.06, 0.05, 0.95));
 
   .is-visible & {
     opacity: 0.8;
     visibility: visible;
-    @include transition(opacity 650ms cubic-bezier(0.57, 0.06, 0.05, 0.95) 200ms);
+    @include transition(
+      opacity 650ms cubic-bezier(0.57, 0.06, 0.05, 0.95) 200ms
+    );
   }
 
   &:hover {
     opacity: 1;
   }
 
-  @include at-query ($max, $medium) {
+  @include at-query($max, $medium) {
     top: 15px;
     right: 8px;
   }
 }
 
-
-@media
-(-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
-
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .ajaxifyCart--add {
     background-size: 8px;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFFODI2Mjg4NDY1NzExRTM4ODdCODU0OEQ4MDA1MjgwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFFODI2Mjg5NDY1NzExRTM4ODdCODU0OEQ4MDA1MjgwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUU4MjYyODY0NjU3MTFFMzg4N0I4NTQ4RDgwMDUyODAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUU4MjYyODc0NjU3MTFFMzg4N0I4NTQ4RDgwMDUyODAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7Q1IXcAAAAL0lEQVR42mJsampiwAH+o/EZsSliYqAQjBrAwMCCJbSJjZXhFAaMoylxgA0ACDAAufIFqTR3duwAAAAASUVORK5CYII=);
@@ -750,5 +742,4 @@ form[action^="/cart/add"] {
     background-size: 8px;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjIxNTJBNEY5NDY1OTExRTM4ODdCODU0OEQ4MDA1MjgwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjIxNTJBNEZBNDY1OTExRTM4ODdCODU0OEQ4MDA1MjgwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjE1MkE0Rjc0NjU5MTFFMzg4N0I4NTQ4RDgwMDUyODAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjE1MkE0Rjg0NjU5MTFFMzg4N0I4NTQ4RDgwMDUyODAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz54TqQaAAAAKElEQVR42mL8//8/AyWAiYFCMGoAAwNLc3Pz/xEeBoyjKXEQGAAQYABVgwijPO94YQAAAABJRU5ErkJggg==);
   }
-
 }

@@ -605,11 +605,12 @@ module.exports = function (grunt) {
         })
         grunt.task
         .run("shell:addandcommit")
-        .run(global.moveFiles).then( ()=>{
+        .then( ()=>{
             grunt.log.write('Temporal branch: '['yellow'].bold);
             grunt.log.writeln();
         })
-        .run('shell:temporalBranch:'+global.branchRelease).then( ()=>{
+        .run('shell:temporalBranch:'+global.branchRelease)
+        .run(global.moveFiles).then( ()=>{
             grunt.log.write(('  Running PRETTIER: '))
         })
         .run('shell:prettier:**').then( ()=> {
