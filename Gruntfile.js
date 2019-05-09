@@ -338,7 +338,7 @@ module.exports = function (grunt) {
             `rm stores/**/config.yml arrayTasksDeployFile`, `git branch -D temporal`, `git branch -D shopify`].join(' && ')
             },
             removeFoldersFromAssets: {
-                command: store => [,
+                command: store => [
                 `rm -r stores/${store}/img`,
                 `rm -r stores/${store}/css_scss`,
                 `rm -r stores/${store}/js`,
