@@ -138,3 +138,189 @@ grunt taskname
 
 - shell:deleteYMLFiles
   > Delete the YML File for each shop
+
+
+CaptacionesPage.jsx
+
+
+
+import React, { useEffect, useState } from 'react';
+import './styles/CaptacionesPage.css';
+
+const API_URL = 'https://api.ejemplo.com/captaciones'; // Reemplaza con tu endpoint real
+
+const CaptacionesPage = () => {
+  const [captaciones, setCaptaciones] = useState([]);
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+
+  const fetchData = async () => {
+    try {
+      const query = `?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+      const response = await fetch(`${API_URL}${query}`);
+      const data = await response.json();
+      setCaptaciones(data);
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(); // carga inicial (puedes quitar si solo buscas manualmente)
+  }, []);
+
+  return (
+    <div className="captaciones-container">
+      <h1>Gestión para captadores y mediadores</h1>
+      <h2>Buscar Captaciones/Pólizas</h2>
+
+      <div className="filtros">
+        <div>
+          <label>Fecha Inicio:</label>
+          <input
+            type="date"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Fecha Fin:</label>
+          <input
+            type="date"
+            value={fechaFin}
+            onChange={(e) => setFechaFin(e.target.value)}
+          />
+        </div>
+        <button onClick={fetchData}>Buscar</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Código Captación</th>
+            <th>Código Póliza</th>
+            <th>Fecha de Captación</th>
+            <th>Tipo de Póliza</th>
+            <th>Fecha de Efecto</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {captaciones.map((item, idx) => (
+            <tr key={idx}>
+              <td>{item.codigoCaptacion}</td>
+              <td>{item.codigoPoliza}</td>
+              <td>{item.fechaCaptacion}</td>
+              <td>{item.tipoPoliza}</td>
+              <td>{item.fechaEfecto}</td>
+              <td>{item.estado}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default CaptacionesPage;
+
+
+
+CaptacionesPage.css
+
+.captaciones-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #001f5f;
+  font-size: 24px;
+}
+
+h2 {
+  color: #001f5f;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filtros label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.filtros input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filtros button {
+  padding: 8px 16px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+thead {
+  background-color: #f5f5f5;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+
+
+App.jsx
+
+import React from 'react';
+import CaptacionesPage from './components/CaptacionesPage';
+
+function App() {
+  return <CaptacionesPage />;
+}
+
+export default App;
+
+
+
+
+[
+  {
+    "codigoCaptacion": "001",
+    "codigoPoliza": "P001",
+    "fechaCaptacion": "2023-01-15",
+    "tipoPoliza": "Vida",
+    "fechaEfecto": "2023-01-20",
+    "estado": "Vigor"
+  },
+  {
+    "codigoCaptacion": "002",
+    "codigoPoliza": "P002",
+    "fechaCaptacion": "2023-02-10",
+    "tipoPoliza": "Salud",
+    "fechaEfecto": "2023-02-15",
+    "estado": "Anulada"
+  }
+]
